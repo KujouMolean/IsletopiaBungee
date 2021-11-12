@@ -1,0 +1,5 @@
+name: IsletopiaBungee
+version: ${project.version}
+main: com.molean.isletopia.bungee.IsletopiaBungee
+depends:
+  - CrinoBot
