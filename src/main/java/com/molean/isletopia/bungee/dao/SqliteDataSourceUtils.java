@@ -6,7 +6,7 @@ import org.sqlite.SQLiteDataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class DataSourceUtils {
+public class SqliteDataSourceUtils {
     private static SQLiteDataSource dataSource = null;
 
     public static Connection getConnection() throws SQLException {

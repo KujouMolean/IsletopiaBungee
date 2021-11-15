@@ -22,7 +22,6 @@ public class PlayTimeCommand implements BotCommandExecutor {
         PlayTimeRequest playTimeRequest = new PlayTimeRequest();
         playTimeRequest.setPlayer(args.get(0));
         ServerMessageUtils.sendServerBungeeMessage("server1", "PlayTimeRequest", playTimeRequest);
-
         return null;
     }
 

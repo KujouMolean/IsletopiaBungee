@@ -26,7 +26,7 @@ public class IsBanCommand implements BotCommandExecutor {
             String isBanned = PlayerParameter.get(args.get(0), "isBanned");
             String pardonTime = PlayerParameter.get(args.get(0), "pardonTime");
             String bannedReason = PlayerParameter.get(args.get(0), "bannedReason");
-            if (isBanned.equals("true")) {
+            if ("true".equals(isBanned)) {
                 if (pardonTime != null && !pardonTime.isEmpty()) {
                     long l = Long.parseLong(pardonTime);
 
@@ -36,7 +36,7 @@ public class IsBanCommand implements BotCommandExecutor {
                     if (bannedReason != null && !bannedReason.isEmpty()) {
 
                         return player + "已被封禁至" + format + "。理由：" + bannedReason;
-                    }else{
+                    } else {
                         return player + "已被封禁至" + format + "。";
                     }
 
@@ -45,7 +45,7 @@ public class IsBanCommand implements BotCommandExecutor {
                     if (bannedReason != null && !bannedReason.isEmpty()) {
 
                         return player + "已被永久封禁。理由：" + bannedReason;
-                    }else{
+                    } else {
                         return player + "已被永久封禁。";
                     }
 

@@ -7,6 +7,7 @@ import com.molean.isletopia.bungee.cirno.command.func.ElytraCommand;
 import com.molean.isletopia.bungee.cirno.command.func.GiveCommand;
 import com.molean.isletopia.bungee.cirno.command.group.*;
 import com.molean.isletopia.bungee.cirno.command.info.HostNameCommand;
+import com.molean.isletopia.bungee.cirno.command.info.IsOnlineCommand;
 import com.molean.isletopia.bungee.cirno.command.info.ListCommand;
 import com.molean.isletopia.bungee.cirno.command.info.PlayTimeCommand;
 import com.molean.isletopia.bungee.cirno.command.manage.KillCommand;
@@ -43,6 +44,8 @@ public class CommandsRegister {
         new GRevoke();
         new Members();
         new RemoveMember();
+        new IsOnlineCommand();
+        new DisableRegisterCommand();
 
     }
 }

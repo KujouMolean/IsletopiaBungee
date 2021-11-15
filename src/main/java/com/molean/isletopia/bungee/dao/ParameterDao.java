@@ -1,6 +1,5 @@
 package com.molean.isletopia.bungee.dao;
 
-import org.bouncycastle.jcajce.provider.asymmetric.rsa.ISOSignatureSpi;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,7 +13,7 @@ public class ParameterDao {
     private static boolean checked = false;
 
     public static void init() {
-        try (Connection connection = DataSourceUtils.getConnection()) {
+        try (Connection connection = SqliteDataSourceUtils.getConnection()) {
             String sql = """
                     create table if not exists parameter
                     (
@@ -42,7 +41,7 @@ public class ParameterDao {
             init();
             checked = true;
         }
-        try (Connection connection = DataSourceUtils.getConnection()) {
+        try (Connection connection = SqliteDataSourceUtils.getConnection()) {
             String sql = """
                        select value
                        from parameter
@@ -73,7 +72,7 @@ public class ParameterDao {
             insert(type, obj, key, value);
             return;
         }
-        try (Connection connection = DataSourceUtils.getConnection()) {
+        try (Connection connection = SqliteDataSourceUtils.getConnection()) {
             String sql = """
                         update parameter
                         set value = ?
@@ -102,7 +101,7 @@ public class ParameterDao {
             set(type, obj, key, value);
             return;
         }
-        try (Connection connection = DataSourceUtils.getConnection()) {
+        try (Connection connection = SqliteDataSourceUtils.getConnection()) {
             String sql = """
                     insert into parameter(type, target, key, value)
                     values (?, ?, ?, ?)
@@ -123,7 +122,7 @@ public class ParameterDao {
             init();
             checked = true;
         }
-        try (Connection connection = DataSourceUtils.getConnection()) {
+        try (Connection connection = SqliteDataSourceUtils.getConnection()) {
             String sql = """
                         delete
                         from parameter
@@ -147,7 +146,7 @@ public class ParameterDao {
             checked = true;
         }
         ArrayList<String> strings = new ArrayList<>();
-        try (Connection connection = DataSourceUtils.getConnection()) {
+        try (Connection connection = SqliteDataSourceUtils.getConnection()) {
             String sql = """
                        select target
                        from parameter

@@ -8,6 +8,7 @@ import com.molean.isletopia.bungee.parameter.ContactParameter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 public class Members implements BotCommandExecutor {
@@ -21,7 +22,7 @@ public class Members implements BotCommandExecutor {
             return "用法: /members group";
         } else {
             String group = args.get(0);
-            ArrayList<String> strings = new ArrayList<>();
+            HashSet<String> strings = new HashSet<>();
 
             for (Long target : ContactParameter.targets()) {
                 String groups = ContactParameter.get(target, "groups");
@@ -33,7 +34,6 @@ public class Members implements BotCommandExecutor {
                 }
             }
             if (!strings.isEmpty()) {
-
                 return "成员：" + String.join(",", strings);
             }else{
                 return "无成员";

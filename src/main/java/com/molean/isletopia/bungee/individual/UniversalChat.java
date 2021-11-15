@@ -242,7 +242,7 @@ public class UniversalChat implements Listener {
             for (ProxiedPlayer player : targetPlayerList) {
                 //确定子文本
                 String substring = message.substring(j);
-                if (substring.startsWith(player.getName())) {
+                if (substring.startsWith(player.getName()) || substring.startsWith(player.getName().replaceAll("#", ""))) {
                     //匹配到了玩家，先把ID前的文本添加。
                     TextComponent subMessageComponent = new TextComponent(color + message.substring(i, j));
                     mainText.addExtra(subMessageComponent);

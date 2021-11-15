@@ -12,6 +12,17 @@ import net.md_5.bungee.api.plugin.Command;
 import java.net.InetSocketAddress;
 
 public class PlayerRegister extends Command {
+
+    private static boolean allowRegister = true;
+
+    public static boolean isAllowRegister() {
+        return allowRegister;
+    }
+
+    public static void setAllowRegister(boolean allowRegister) {
+        PlayerRegister.allowRegister = allowRegister;
+    }
+
     public PlayerRegister() {
         super("register", "register", "reg", "r", "注册");
         ProxyServer.getInstance().getPluginManager().registerCommand(BungeeRelatedUtils.getPlugin(),this);
@@ -22,10 +33,17 @@ public class PlayerRegister extends Command {
         if (args.length < 2) {
             return;
         }
+        ProxiedPlayer player = (ProxiedPlayer) sender;
+        if (!allowRegister) {
+            player.sendMessage(ChatMessageType.ACTION_BAR
+                    , TextComponent.fromLegacyText("§c暂时禁止注册，请联系管理员"));
+            PlayerLogin.failedPlayers.add(player);
+            return;
+        }
         if (!args[0].equalsIgnoreCase(args[1])) {
             return;
         }
-        ProxiedPlayer player = (ProxiedPlayer) sender;
+
         String hostAddress = ((InetSocketAddress) player.getSocketAddress()).getAddress().getHostAddress();
         if (AccountService.register(sender.getName(), hostAddress, args[0])) {
             player.sendMessage(ChatMessageType.ACTION_BAR
