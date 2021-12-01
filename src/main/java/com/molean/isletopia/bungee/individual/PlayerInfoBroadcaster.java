@@ -19,7 +19,7 @@ public class PlayerInfoBroadcaster {
             ArrayList<String> playersName = new ArrayList<>();
             Map<String, List<String>> serverPlayersMap = new HashMap<>();
 
-            for (String s : ProxyServer.getInstance().getConfig().getServersCopy().keySet()) {
+            for (String s : ProxyServer.getInstance().getConfig().getServers().keySet()) {
                 serverPlayersMap.put(s, new ArrayList<>());
             }
 

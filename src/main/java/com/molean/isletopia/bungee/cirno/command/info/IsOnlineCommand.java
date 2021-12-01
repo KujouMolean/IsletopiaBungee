@@ -20,8 +20,8 @@ public class IsOnlineCommand implements BotCommandExecutor {
         String name = args.get(0);
         ProxiedPlayer player = ProxyServer.getInstance().getPlayer(name);
         if (player == null) {
-            return player + " 不在线";
+            return name + " 不在线";
         }
-        return player + " 当前在线";
+        return name + " 当前在线";
     }
 }

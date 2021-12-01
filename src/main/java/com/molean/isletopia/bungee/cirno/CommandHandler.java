@@ -42,10 +42,14 @@ public class CommandHandler {
         }
 
         if (!PermissionHandler.hasPermission(command.toLowerCase(Locale.ROOT), id)) {
-
-            return "权限不足, 琪露诺不要听你的!";
+            return "琪露诺不听你的!";
+        }
+        try {
+            return botCommandExecutor.execute(id, args);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "琪露诺停止了思考。";
         }
 
-        return botCommandExecutor.execute(id, args);
     }
 }

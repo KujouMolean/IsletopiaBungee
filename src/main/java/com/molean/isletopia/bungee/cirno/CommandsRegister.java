@@ -13,6 +13,10 @@ import com.molean.isletopia.bungee.cirno.command.info.PlayTimeCommand;
 import com.molean.isletopia.bungee.cirno.command.manage.KillCommand;
 import com.molean.isletopia.bungee.cirno.command.manage.ParameterCommand;
 import com.molean.isletopia.bungee.cirno.command.manage.StatusCommand;
+import com.molean.isletopia.bungee.cirno.command.owner.GrantOP;
+import com.molean.isletopia.bungee.cirno.command.owner.Kick;
+import com.molean.isletopia.bungee.cirno.command.owner.RevokeOP;
+import com.molean.isletopia.bungee.cirno.command.owner.SetTitle;
 import com.molean.isletopia.bungee.cirno.command.permission.PermissionCommand;
 import com.molean.isletopia.bungee.cirno.command.permission.GrantCommand;
 import com.molean.isletopia.bungee.cirno.command.permission.RevokeCommand;
@@ -46,6 +50,9 @@ public class CommandsRegister {
         new RemoveMember();
         new IsOnlineCommand();
         new DisableRegisterCommand();
-
+        new SetTitle();
+        new GrantOP();
+        new RevokeOP();
+        new Kick();
     }
 }

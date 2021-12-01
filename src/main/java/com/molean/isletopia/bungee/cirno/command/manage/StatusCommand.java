@@ -18,7 +18,7 @@ public class StatusCommand implements BotCommandExecutor {
 
     @Override
     public String execute(long id, List<String> args) {
-        Map<String, ServerInfo> serversCopy = ProxyServer.getInstance().getServersCopy();
+        Map<String, ServerInfo> serversCopy = ProxyServer.getInstance().getServers();
         Map<String, Long> lastUpdate = new HashMap<>();
         for (String s : serversCopy.keySet()) {
             if (s.startsWith("server")) {

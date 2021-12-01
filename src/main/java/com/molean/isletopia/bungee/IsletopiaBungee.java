@@ -1,17 +1,21 @@
 package com.molean.isletopia.bungee;
 
-import com.molean.crinobot.CrinoBot;
+import com.molean.cirnobot.CirnoBot;
+import com.molean.cirnobot.Robot;
 import com.molean.isletopia.bungee.cirno.CirnoHandlerImpl;
+import com.molean.isletopia.bungee.cirno.CirnoUtils;
 import com.molean.isletopia.bungee.cirno.CommandsRegister;
+import com.molean.isletopia.bungee.cirno.ListenerRegister;
 import com.molean.isletopia.bungee.handler.HandlerRegister;
 import com.molean.isletopia.bungee.individual.*;
 import com.molean.isletopia.shared.message.RedisMessageListener;
-import net.md_5.bungee.BungeeCord;
+import net.mamoe.mirai.event.EventChannel;
+import net.mamoe.mirai.event.SimpleListenerHost;
+import net.mamoe.mirai.event.events.BotEvent;
 import net.md_5.bungee.UserConnection;
-import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
-import net.md_5.bungee.api.score.Scoreboard;
+import net.md_5.bungee.protocol.PacketWrapper;
 
 public final class IsletopiaBungee extends Plugin {
     private static IsletopiaBungee isletopiaBungee;
@@ -20,16 +24,22 @@ public final class IsletopiaBungee extends Plugin {
         return isletopiaBungee;
     }
 
-    public static void test() {
-        if (ProxyServer.getInstance().getConfig().getPlayerLimit() == 5) {
-        }
+    public void init() {
+        EventChannel<BotEvent> eventChannel = Robot.getBot().getEventChannel();
+        eventChannel.registerListenerHost(new SimpleListenerHost() {
+
+
+        });
     }
+
 
     @Override
     public void onEnable() {
         isletopiaBungee = this;
         new CommandsRegister();
-        CrinoBot.setCrinoHandler(new CirnoHandlerImpl());
+        new ListenerRegister();
+        CirnoBot.setCirnoHandler(new CirnoHandlerImpl());
+
         new UniversalTell();
         new WelcomeMessage();
         new UniversalChat();
@@ -39,19 +49,17 @@ public final class IsletopiaBungee extends Plugin {
         RedisMessageListener.init();
         new HandlerRegister();
         new PlayerInfoBroadcaster();
-        new IslandCommand();
         new GlobalTabList();
         new PlayerLogin();
         new PlayerRegister();
         new PlayerPassword();
         new ChatChannel();
-        test();
 
     }
 
     @Override
     public void onDisable() {
-        CrinoBot.setCrinoHandler(null);
-        RedisMessageListener.destroy();
+        CirnoBot.setCirnoHandler(null);
+        CirnoUtils.clearListener();
     }
 }

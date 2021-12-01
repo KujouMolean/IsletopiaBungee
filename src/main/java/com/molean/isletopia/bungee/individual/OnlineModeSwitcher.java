@@ -1,6 +1,7 @@
 package com.molean.isletopia.bungee.individual;
 
 import com.molean.isletopia.bungee.IsletopiaBungee;
+import com.molean.isletopia.bungee.MessageUtils;
 import com.molean.isletopia.bungee.parameter.PlayerParameter;
 import com.molean.isletopia.shared.utils.RedisUtils;
 import net.md_5.bungee.api.ProxyServer;
@@ -30,6 +31,7 @@ public class OnlineModeSwitcher implements Listener {
             connection.setOnlineMode(false);
             return;
         }
+        connection.setOnlineMode(true);
         String lastLoginString = PlayerParameter.get(name, "lastLogin");
         if (lastLoginString == null || lastLoginString.isEmpty()) {
             lastLoginString = "0";
@@ -95,6 +97,12 @@ public class OnlineModeSwitcher implements Listener {
             RedisUtils.getCommand().set(name + ":SkinValue", value);
             RedisUtils.getCommand().set(name + ":SkinSignature", signature);
         }
+    }
+
+    @EventHandler
+    public void notify(PostLoginEvent event) {
+        MessageUtils.strong(event.getPlayer(),"服务器目前处于1.18测试状态。有小概率回档");
+        MessageUtils.strong(event.getPlayer(),"为了安全起见，在12月3日前请勿建造大型工程");
     }
 
 

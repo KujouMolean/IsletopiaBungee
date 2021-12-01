@@ -92,7 +92,7 @@ public class PlayerLogin extends Command implements Listener {
         String server = UniversalParameter.getParameter(uuid, "server");
         if (server == null || server.isEmpty()) {
             ArrayList<String> strings = new ArrayList<>();
-            for (String s : ProxyServer.getInstance().getServersCopy().keySet()) {
+            for (String s : ProxyServer.getInstance().getServers().keySet()) {
                 if (s.startsWith("server")) {
                     strings.add(s);
                 }

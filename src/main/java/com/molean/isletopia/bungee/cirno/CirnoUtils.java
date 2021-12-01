@@ -1,55 +1,18 @@
 package com.molean.isletopia.bungee.cirno;
 
-import com.molean.crinobot.Robot;
-import com.molean.isletopia.bungee.IsletopiaBungee;
+import com.molean.cirnobot.Robot;
 import com.molean.isletopia.bungee.individual.UniversalChat;
-import com.tencentcloudapi.common.Credential;
-import com.tencentcloudapi.common.exception.TencentCloudSDKException;
-import com.tencentcloudapi.common.profile.ClientProfile;
-import com.tencentcloudapi.common.profile.HttpProfile;
-import com.tencentcloudapi.tbp.v20190627.TbpClient;
-import com.tencentcloudapi.tbp.v20190627.models.Group;
-import com.tencentcloudapi.tbp.v20190627.models.TextProcessRequest;
-import com.tencentcloudapi.tbp.v20190627.models.TextProcessResponse;
 import net.mamoe.mirai.contact.NormalMember;
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.mamoe.mirai.event.EventChannel;
+import net.mamoe.mirai.event.SimpleListenerHost;
+import net.mamoe.mirai.event.events.BotEvent;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CirnoUtils {
-
-    public static String getResponse(String terminalId, String inputText) {
-        try {
-            Credential cred = new Credential("AKID2tUorc7LIxMULuDFzSfdJiqiIbdPu89t", "VjgMmvnOjna6KIzPYQ1KM8dqmRqxnMef");
-            HttpProfile httpProfile = new HttpProfile();
-            httpProfile.setEndpoint("tbp.tencentcloudapi.com");
-            ClientProfile clientProfile = new ClientProfile();
-            clientProfile.setHttpProfile(httpProfile);
-            TbpClient client = new TbpClient(cred, "", clientProfile);
-            TextProcessRequest req = new TextProcessRequest();
-            req.setBotId("7652b54d-9204-403a-a724-d896bf767d2d");
-            req.setBotEnv("dev");
-            req.setTerminalId(terminalId);
-            req.setInputText(inputText);
-            TextProcessResponse resp = client.TextProcess(req);
-            Group[] groupList = resp.getResponseMessage().getGroupList();
-            StringBuilder plainMessage = new StringBuilder();
-            for (Group group : groupList) {
-                plainMessage.append(group.getContent());
-
-            }
-            return plainMessage.toString();
-        } catch (TencentCloudSDKException e) {
-            e.printStackTrace();
-        }
-        return "琪露诺再想想..";
-    }
 
 
     public static int realLength(String string) {
@@ -86,30 +49,24 @@ public class CirnoUtils {
     }
 
 
-    private static final Map<Long, String> cachedNameCard = new HashMap<>();
-    private static final Map<Long, Long> cachedNameCardTime = new HashMap<>();
-
     public static String getNameCardByQQ(long id) {
-        if (System.currentTimeMillis() - cachedNameCardTime.getOrDefault(id, 0L) < 3 * 60 * 1000) {
-            return cachedNameCard.get(id);
+
+        NormalMember normalMember = getGameGroup().get(id);
+        if (normalMember == null) {
+            return id + "";
         }
-
-        for (NormalMember member : Objects.requireNonNull(Robot.getBot().getGroup(483653595L)).getMembers()) {
-            if (member.getId() == id) {
-                cachedNameCard.put(id, member.getNameCard());
-                cachedNameCardTime.put(id, System.currentTimeMillis());
-
-                return member.getNameCard();
-            }
-        }
-        return id + "";
-    }
-
-    public static void gameMessage(String message) {
-        for (ProxiedPlayer player : IsletopiaBungee.getPlugin().getProxy().getPlayers()) {
-            player.sendMessage(TextComponent.fromLegacyText("§f<§bCirnoBot§f> §r" + message));
+        String nameCard = normalMember.getNameCard();
+        if (nameCard.isEmpty()) {
+            return normalMember.getNick();
+        } else {
+            return normalMember.getNameCard();
         }
     }
+
+    public static net.mamoe.mirai.contact.Group getGameGroup() {
+        return Robot.getBot().getGroup(483653595L);
+    }
+
 
     public static void broadcastMessage(String message) {
         UniversalChat.chatMessage("白", "§bCirnoBot", message);
@@ -146,5 +103,19 @@ public class CirnoUtils {
         if (m.trim().length() == 0)
             return;
         UniversalChat.chatMessage("白", "§o" + p, m);
+    }
+
+    private static final HashSet<SimpleListenerHost> hashSet = new HashSet<>();
+
+    public static void registerListener(SimpleListenerHost simpleListenerHost) {
+        EventChannel<BotEvent> eventChannel = Robot.getBot().getEventChannel();
+        hashSet.add(simpleListenerHost);
+        eventChannel.registerListenerHost(simpleListenerHost);
+    }
+
+    public static void clearListener() {
+        for (SimpleListenerHost simpleListenerHost : hashSet) {
+            simpleListenerHost.cancelAll();
+        }
     }
 }

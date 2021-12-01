@@ -16,7 +16,6 @@ import net.md_5.bungee.event.EventHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class ChatChannel extends Command implements TabExecutor, Listener {
 
@@ -84,7 +83,7 @@ public class ChatChannel extends Command implements TabExecutor, Listener {
         MessageUtils.notify(player, "你已经加入聊天频道: " + channel);
         ArrayList<String> members = new ArrayList<>();
         for (ProxiedPlayer proxiedPlayer : ProxyServer.getInstance().getPlayers()) {
-            if (channelMap.get(proxiedPlayer.getUniqueId()).equalsIgnoreCase(channel)) {
+            if (channel.equalsIgnoreCase(channelMap.get(proxiedPlayer.getUniqueId()))) {
                 members.add(proxiedPlayer.getName());
             }
         }
@@ -162,7 +161,7 @@ public class ChatChannel extends Command implements TabExecutor, Listener {
 
     @EventHandler
     public void on(PlayerDisconnectEvent event) {
-        String channel = channelMap.getOrDefault(event.getPlayer().getUniqueId(),"白");
+        String channel = channelMap.getOrDefault(event.getPlayer().getUniqueId(), "白");
         ProxiedPlayer player = event.getPlayer();
         channelMap.remove(event.getPlayer().getUniqueId());
         notifyQuit(channel, player.getName());

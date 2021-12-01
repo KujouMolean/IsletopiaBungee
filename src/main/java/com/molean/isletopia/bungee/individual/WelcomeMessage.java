@@ -37,8 +37,9 @@ public class WelcomeMessage implements Listener {
     @EventHandler
     public void on(ProxyPingEvent event) {
 
-        String line1 = "       #§lM#§li#§ln#§le#§lc#§lr#§la#§lf#§lt #§l1#§l.#§l1#§l7#§l.#§l1 #§l- #§lI#§ls#§ll#§le#§lt#§lo#§lp#§li#§la#§lS#§le#§lr#§lv#§le#§lr";
-        String line2 = "            #§l欢#§l迎#§l加#§l入#§l梦#§l幻#§l之#§l屿#§l原#§l版#§l空#§l岛#§l服#§l务#§l器";
+        String line1 = "       #§lM#§li#§ln#§le#§lc#§lr#§la#§lf#§lt #§l1#§l.#§l1#§l8 #§l- #§lI#§ls#§ll#§le#§lt#§lo#§lp#§li#§la#§lS#§le#§lr#§lv#§le#§lr";
+//        String line1 = "       #§lM#§li#§ln#§le#§lc#§lr#§la#§lf#§lt #§l1#§l.#§l1#§l7#§l.#§l1 #§l- #§lI#§ls#§ll#§le#§lt#§lo#§lp#§li#§la#§lS#§le#§lr#§lv#§le#§lr";
+        String line2 = "           #§l欢#§l迎#§l加#§l入#§l梦#§l幻#§l之#§l屿#§l原#§l版#§l空#§l岛#§l服#§l务#§l器";
         String text = generateRainbowText(line1) + "\n" + generateRainbowText(line2);
 
         event.getResponse().setFavicon(favicon);

@@ -1,16 +1,33 @@
-package com.molean.isletopia.bungee.cirno;
+package com.molean.isletopia.bungee.cirno.event;
 
-import com.molean.cirnobot.CirnoHandler;
+import com.molean.cirnobot.CirnoBot;
 import com.molean.cirnobot.Robot;
-import com.molean.isletopia.bungee.IsletopiaBungee;
+import com.molean.isletopia.bungee.cirno.CirnoUtils;
+import com.molean.isletopia.shared.platform.BungeeRelatedUtils;
+import net.mamoe.mirai.event.EventHandler;
+import net.mamoe.mirai.event.SimpleListenerHost;
+import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.message.data.*;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.scheduler.ScheduledTask;
 
+import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class CirnoHandlerImpl implements CirnoHandler {
+public class GroupMessage extends SimpleListenerHost {
+    private boolean registered = false;
+    public GroupMessage() {
+        ScheduledTask schedule = ProxyServer.getInstance().getScheduler().schedule(BungeeRelatedUtils.getPlugin(), () -> {
+            if (!registered && Robot.getBot() != null) {
+                CirnoUtils.registerListener(this);
+                registered = true;
+            }
+        }, 1, 1, TimeUnit.SECONDS);
 
+
+    }
     private static String getText(QuoteReply quoteReply) {
         MessageChain originalMessage = quoteReply.getSource().getOriginalMessage();
         String originText = originalMessage.contentToString();
@@ -25,17 +42,27 @@ public class CirnoHandlerImpl implements CirnoHandler {
         }
     }
 
-    @SuppressWarnings("all")
-    public static String getPlainMessage(MessageChain rawMessage) {
+    @EventHandler
+    public void onGroupMessage(GroupMessageEvent event) {
+        if (event.getGroup().getId() != 483653595) {
+            return;
+        }
+        if (Calendar.getInstance().getTimeInMillis() / 1000 - event.getTime() > 30) {
+            return;
+        }
+
         boolean hasQuote = false;
-        for (SingleMessage singleMessage : rawMessage) {
+        for (SingleMessage singleMessage : event.getMessage()) {
             if (singleMessage instanceof QuoteReply) {
                 hasQuote = true;
                 break;
             }
         }
-        StringBuilder plainMessage = new StringBuilder();
 
+        String nameCard = event.getSender().getNameCard();
+        long id = event.getSender().getId();
+        StringBuilder plainMessage = new StringBuilder();
+        MessageChain rawMessage = event.getMessage();
         for (SingleMessage singleMessage : rawMessage) {
             String subMessage;
             if (singleMessage instanceof QuoteReply) {
@@ -47,17 +74,9 @@ public class CirnoHandlerImpl implements CirnoHandler {
             } else if (singleMessage instanceof PlainText) {
                 subMessage = singleMessage.contentToString();
             } else if (singleMessage instanceof Image) {
-
-                if (singleMessage instanceof net.mamoe.mirai.internal.message.OnlineImage) {
-                    String url = ((net.mamoe.mirai.internal.message.OnlineImage) singleMessage).getOriginUrl();
-                    subMessage = "{url#" + singleMessage.contentToString() + "#" + url + "}";
-                } else {
-                    subMessage = singleMessage.contentToString();
-                }
-
+                subMessage = singleMessage.contentToString();
             } else if (singleMessage instanceof Voice) {
-                String url = ((Voice) singleMessage).getUrl();
-                subMessage = "{url#" + singleMessage.contentToString() + "#" + url + "}";
+                subMessage = singleMessage.contentToString();
             } else if (singleMessage instanceof Face) {
                 subMessage = singleMessage.contentToString();
             } else {
@@ -65,21 +84,8 @@ public class CirnoHandlerImpl implements CirnoHandler {
             }
             plainMessage.append(subMessage);
         }
-        return plainMessage.toString();
-    }
-
-
-    @Override
-    public void handler(long id, String nameCard, String plainMessage, MessageChain messageChain) {
-        CirnoUtils.broadcastChat(CirnoUtils.getNameCardByQQ(id), getPlainMessage(messageChain));
-
-        //command handle
-        if (plainMessage.startsWith("/")) {
-            String command = plainMessage.substring(1);
-            String s = CommandHandler.handleCommand(id, command);
-            if (s != null) {
-                CirnoUtils.broadcastMessage(s);
-            }
+        if (CirnoBot.getCirnoHandler() != null) {
+            CirnoBot.getCirnoHandler().handler(id, nameCard, plainMessage.toString(), event.getMessage());
         }
     }
 }

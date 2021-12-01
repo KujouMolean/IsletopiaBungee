@@ -1,6 +1,5 @@
 package com.molean.isletopia.bungee.individual;
 
-import com.molean.crinobot.CrinoBot;
 import com.molean.isletopia.bungee.IsletopiaBungee;
 import com.molean.isletopia.bungee.cirno.CirnoUtils;
 import com.molean.isletopia.bungee.parameter.PlayerParameter;
@@ -70,7 +69,7 @@ public class UniversalChat implements Listener {
         UniversalChat.chatMessage(channel, p, m);
         if (channel.equalsIgnoreCase("白")) {
             ProxyServer.getInstance().getScheduler().runAsync(IsletopiaBungee.getPlugin(), () -> {
-                CrinoBot.sendMessage("<" + p + "> " + m);
+                CirnoUtils.getGameGroup().sendMessage("<" + p + "> " + m);
             });
         }
         event.setCancelled(true);
