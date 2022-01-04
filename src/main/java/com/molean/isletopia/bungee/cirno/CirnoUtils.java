@@ -78,7 +78,8 @@ public class CirnoUtils {
     public static void broadcastChat(String sender, String message) {
         String p = sender.replace('§', '&');
         String m = message.replace('§', '&');
-        m = m.replace("\n", "\\n");
+        m = m.replace("\n\r", "[换行]︎");
+        m = m.replace("\n", "[换行]︎");
 
         if (realLength(p) > 16) {
             p = leftString(p, 16) + "..";
@@ -86,7 +87,7 @@ public class CirnoUtils {
 
         int addition = 0;
 
-        Pattern pattern = Pattern.compile("\\{url#(.*)#(.*)}");
+        Pattern pattern = Pattern.compile("\\{\\{\\{url#(.*?)#(.*?)}}}");
         Matcher matcher = pattern.matcher(m);
 
         if (matcher.find()) {
@@ -95,7 +96,6 @@ public class CirnoUtils {
                 addition += group.length();
             } while (matcher.find(matcher.start() + 1));
         }
-
 
         if (realLength(m) > 256 + addition) {
             m = leftString(m, 256 + addition) + "..";

@@ -10,8 +10,6 @@ public class ListenerRegister {
     public ListenerRegister() {
         new GroupMessage();
         new MemberJoin();
-        new Mute();
-        new Unmute();
-        new Nick();
+
     }
 }

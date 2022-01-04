@@ -1,6 +1,7 @@
 package com.molean.isletopia.bungee.individual;
 
 import com.molean.isletopia.bungee.IsletopiaBungee;
+import com.molean.isletopia.bungee.MessageUtils;
 import com.molean.isletopia.bungee.cirno.CirnoUtils;
 import com.molean.isletopia.bungee.parameter.PlayerParameter;
 import com.molean.isletopia.shared.message.ServerMessageUtils;
@@ -50,28 +51,21 @@ public class UniversalChat implements Listener {
             event.setCancelled(true);
             return;
         }
-
         if (server.getInfo().getName().startsWith("club_")) {
             return;
         }
-
-        if (server.getInfo().getName().equalsIgnoreCase("dispatcher")) {
-            if (!PlayerLogin.isLoggedInMap.getOrDefault(proxiedPlayer, false)) {
-                event.setCancelled(true);
-                return;
+        String p = proxiedPlayer.getName();
+        String m = event.getMessage();
+        String channels = ChatChannel.getChannels(proxiedPlayer.getUniqueId());
+        for (String channel : channels.split(",")) {
+            UniversalChat.chatMessage(channel, p, m);
+            if (channel.equalsIgnoreCase("白")) {
+                ProxyServer.getInstance().getScheduler().runAsync(IsletopiaBungee.getPlugin(), () -> {
+                    CirnoUtils.getGameGroup().sendMessage("<" + p + "> " + m);
+                });
             }
         }
 
-
-        String p = proxiedPlayer.getName();
-        String m = event.getMessage();
-        String channel = ChatChannel.getChannel(proxiedPlayer.getUniqueId());
-        UniversalChat.chatMessage(channel, p, m);
-        if (channel.equalsIgnoreCase("白")) {
-            ProxyServer.getInstance().getScheduler().runAsync(IsletopiaBungee.getPlugin(), () -> {
-                CirnoUtils.getGameGroup().sendMessage("<" + p + "> " + m);
-            });
-        }
         event.setCancelled(true);
     }
 
@@ -219,11 +213,13 @@ public class UniversalChat implements Listener {
 
         String color = ChatChannel.getChannelColor(channel);
 
+        message = message.replaceAll("\\$","￥");
+
         //判断玩家是否刷屏
         if (!sourcePlayer.startsWith("§")) {
             String realName = sourcePlayer.replaceAll("§.", "");
             if (!realName.equalsIgnoreCase("CirnoBot")) {
-                preHandle(sourcePlayer.replaceAll("§.", ""), message);
+                preHandle(sourcePlayer.replaceAll("§.", ""), channel + message);
             }
         }
 
@@ -237,10 +233,31 @@ public class UniversalChat implements Listener {
         int j = 0;
         outer:
         while (j < message.length()) {
+            String substring = message.substring(j);
+            String substringLower = substring.toLowerCase(Locale.ROOT);
+
+            if (substringLower.startsWith("{")) {
+                //如果是图片，则用"[图片]"方式显示，并添加超链接下划线
+                Pattern pattern = Pattern.compile("\\{\\{\\{url#(.*?)#(.*?)}}}");
+                Matcher matcher = pattern.matcher(substring);
+                if (matcher.find()) {
+                    String group = matcher.group();
+                    String text = matcher.group(1);
+                    String url = matcher.group(2);
+                    TextComponent subMessageComponent = new TextComponent(color + message.substring(i, j));
+                    mainText.addExtra(subMessageComponent);
+                    TextComponent textComponent = new TextComponent(color + "§n" + text + "§r" + color);
+                    textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, url));
+                    mainText.addExtra(textComponent);
+                    j += group.length();
+                    i = j;
+                    continue;
+                }
+            }
+
             //首先判定在线玩家，优先匹配长ID
             for (ProxiedPlayer player : targetPlayerList) {
                 //确定子文本
-                String substring = message.substring(j);
                 if (substring.startsWith(player.getName()) || substring.startsWith(player.getName().replaceAll("#", ""))) {
                     //匹配到了玩家，先把ID前的文本添加。
                     TextComponent subMessageComponent = new TextComponent(color + message.substring(i, j));
@@ -266,7 +283,6 @@ public class UniversalChat implements Listener {
 
             //匹配关键字，添加超链接与下划线
             for (String s : commandMapping.keySet()) {
-                String substring = message.substring(j);
                 if (substring.startsWith(s)) {
                     //匹配到了，添加之前的文本
                     TextComponent subMessageComponent = new TextComponent(color + message.substring(i, j));
@@ -297,8 +313,7 @@ public class UniversalChat implements Listener {
             }
 
 
-            String substring = message.substring(j);
-            String substringLower = substring.toLowerCase(Locale.ROOT);
+
 
             //匹配超链接
             if (substringLower.startsWith("https://") || substringLower.startsWith("http://")) {
@@ -330,25 +345,6 @@ public class UniversalChat implements Listener {
                     mainText.addExtra(subMessageComponent);
                     TextComponent textComponent = new TextComponent(color + "§n" + group + "§r" + color);
                     textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, group));
-                    mainText.addExtra(textComponent);
-                    j += group.length();
-                    i = j;
-                    continue;
-                }
-            }
-
-            if (substringLower.startsWith("{")) {
-                //如果是图片，则用"[图片]"方式显示，并添加超链接下划线
-                Pattern pattern = Pattern.compile("\\{url#(.*)#(.*)}");
-                Matcher matcher = pattern.matcher(substring);
-                if (matcher.find()) {
-                    String group = matcher.group();
-                    String text = matcher.group(1);
-                    String url = matcher.group(2);
-                    TextComponent subMessageComponent = new TextComponent(color + message.substring(i, j));
-                    mainText.addExtra(subMessageComponent);
-                    TextComponent textComponent = new TextComponent(color + "§n" + text + "§r" + color);
-                    textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, url));
                     mainText.addExtra(textComponent);
                     j += group.length();
                     i = j;
@@ -416,10 +412,6 @@ public class UniversalChat implements Listener {
         mainText.addExtra(color + message.substring(i));
         TextComponent commonFinalText = new TextComponent();
 
-//        if (!channel.equalsIgnoreCase("default")) {
-//            commonFinalText.addExtra(color + "[" + channel + "频道]");
-//        }
-
         {
             commonFinalText.addExtra("§r" + color + "<");
             String visitCmd = "/visit " + sourcePlayer.replaceAll("§.", "");
@@ -432,8 +424,6 @@ public class UniversalChat implements Listener {
             commonFinalText.addExtra(" ");
             commonFinalText.addExtra(mainText);
         }
-
-
         TextComponent collectionFinalText = new TextComponent();
 
 //        if (!channel.equalsIgnoreCase("default")) {
@@ -462,6 +452,7 @@ public class UniversalChat implements Listener {
                 player.sendMessage(ChatMessageType.CHAT, commonFinalText);
             }
         }
+
         for (ProxiedPlayer notifyPlayer : notifyPlayers) {
             notify(notifyPlayer.getName());
         }

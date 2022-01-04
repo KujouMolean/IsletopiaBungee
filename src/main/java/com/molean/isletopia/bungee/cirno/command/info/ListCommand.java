@@ -16,8 +16,10 @@ public class ListCommand implements BotCommandExecutor {
     @Override
     public String execute(long id, List<String> args) {
         List<ProxiedPlayer> players = new ArrayList<>(ProxyServer.getInstance().getPlayers());
+        players.removeIf(player -> !player.getPendingConnection().isOnlineMode());
+
         if (players.size() > 0) {
-            String message = "梦幻之屿共有 " + players.size() + " 玩家在线。";
+            String message = "梦幻之屿共有 " + players.size() + " 正版玩家在线。";
 
             Random random = new Random();
             int starNumber = random.nextInt(Math.min(players.size(), 5)) + 1;

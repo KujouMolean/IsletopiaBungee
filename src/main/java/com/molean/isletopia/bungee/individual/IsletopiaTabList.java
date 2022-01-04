@@ -59,7 +59,6 @@ public class IsletopiaTabList extends TabList {
     public void onUpdate(PlayerListItem playerListItem) {
     }
 
-
     void addFakePlayer(UUID uuid, String name) {
         executeInEventLoop(() -> {
             PlayerListItem pli = new PlayerListItem();
@@ -67,7 +66,6 @@ public class IsletopiaTabList extends TabList {
             PlayerListItem.Item item = new PlayerListItem.Item();
             item.setPing(0);
             item.setUsername(name);
-//            item.setDisplayName(display);
             item.setUuid(uuid);
             item.setProperties(new String[0][0]);
             pli.setItems(new PlayerListItem.Item[]{item});

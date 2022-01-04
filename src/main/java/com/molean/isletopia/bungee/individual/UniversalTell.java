@@ -25,7 +25,7 @@ public class UniversalTell extends Command {
 
         if (sender instanceof ProxiedPlayer player) {
             Server server = player.getServer();
-            if (server == null || server.getInfo().getName().equals("login")) {
+            if (server == null || server.getInfo().getName().equals("login") || player.getName().startsWith("#")) {
                 player.sendMessage(TextComponent.fromLegacyText("§c你当前不能使用此指令"));
                 return;
             }
@@ -33,11 +33,11 @@ public class UniversalTell extends Command {
 
         //
 
+
         if (args.length < 2) {
             sender.sendMessage(TextComponent.fromLegacyText("§c用法: /tell [玩家] [消息..]"));
             return;
         }
-
 
         //
 
@@ -52,6 +52,7 @@ public class UniversalTell extends Command {
         ArrayList<String> strings = new ArrayList<>(Arrays.asList(args));
         strings.remove(0);
         String message = String.join(" ", strings);
+        message = message.replaceAll("\\$", "￥");
         String name = sender.getName();
         String finalMessage = "§7" + name + " §7-> " + player.getName() + "§7: " + message;
         player.sendMessage(TextComponent.fromLegacyText(finalMessage));

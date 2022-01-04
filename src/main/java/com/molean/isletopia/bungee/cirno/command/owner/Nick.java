@@ -24,12 +24,10 @@ public class Nick implements BotCommandExecutor {
         } catch (NumberFormatException e) {
             return args.get(0) + "是谁啊, 琪露诺表示没见过!";
         }
-
         String name = "";
         if (args.size() >= 2) {
             name = args.get(1);
         }
-
         if (!CirnoUtils.getGameGroup().contains(qq)) {
             return args.get(0) + "是谁啊, 琪露诺表示没见过!";
         }
@@ -38,6 +36,9 @@ public class Nick implements BotCommandExecutor {
             return args.get(0) + "是谁啊, 琪露诺表示没见过!";
         }
         String nameCardByQQ = CirnoUtils.getNameCardByQQ(normalMember.getId());
+        if (name.equals("query")) {
+            return normalMember.getNameCard();
+        }
         normalMember.setNameCard(name);
         return nameCardByQQ + "的新名字是:" + name;
     }

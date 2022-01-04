@@ -13,6 +13,7 @@ import net.mamoe.mirai.event.EventChannel;
 import net.mamoe.mirai.event.SimpleListenerHost;
 import net.mamoe.mirai.event.events.BotEvent;
 import net.md_5.bungee.UserConnection;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.protocol.PacketWrapper;
@@ -27,8 +28,6 @@ public final class IsletopiaBungee extends Plugin {
     public void init() {
         EventChannel<BotEvent> eventChannel = Robot.getBot().getEventChannel();
         eventChannel.registerListenerHost(new SimpleListenerHost() {
-
-
         });
     }
 
@@ -38,7 +37,10 @@ public final class IsletopiaBungee extends Plugin {
         isletopiaBungee = this;
         new CommandsRegister();
         new ListenerRegister();
-        CirnoBot.setCirnoHandler(new CirnoHandlerImpl());
+
+        if (ProxyServer.getInstance().getConfig().getPlayerLimit() > 5) {
+            CirnoBot.setCirnoHandler(new CirnoHandlerImpl());
+        }
 
         new UniversalTell();
         new WelcomeMessage();
@@ -46,20 +48,23 @@ public final class IsletopiaBungee extends Plugin {
         new ConnectionDetect();
         new KickUnsupportedUser();
         new OnlineModeSwitcher();
+
         RedisMessageListener.init();
+
         new HandlerRegister();
         new PlayerInfoBroadcaster();
         new GlobalTabList();
-        new PlayerLogin();
-        new PlayerRegister();
-        new PlayerPassword();
         new ChatChannel();
-
+        new PlayerLogin();
+        new IslandCommand();
     }
 
     @Override
     public void onDisable() {
         CirnoBot.setCirnoHandler(null);
         CirnoUtils.clearListener();
+        RedisMessageListener.destroy();;
     }
+
+
 }

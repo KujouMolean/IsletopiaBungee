@@ -94,14 +94,6 @@ public class KickUnsupportedUser implements Listener {
                 return;
             }
         }
-
-        if(name.startsWith("#")){
-            name = name.substring(1);
-        }
-        if (!name.matches("[0-9a-zA-z_]{3,16}")) {
-            event.getConnection().disconnect(new TextComponent("用户名不合法!"));
-        }
-
     }
 
 }
