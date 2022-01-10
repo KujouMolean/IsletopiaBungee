@@ -51,9 +51,11 @@ public class UniversalChat implements Listener {
             event.setCancelled(true);
             return;
         }
+
         if (server.getInfo().getName().startsWith("club_")) {
             return;
         }
+
         String p = proxiedPlayer.getName();
         String m = event.getMessage();
         String channels = ChatChannel.getChannels(proxiedPlayer.getUniqueId());

@@ -69,7 +69,7 @@ public class Rank implements BotCommandExecutor {
         }
 
         StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < priorityQueue.size() && i < 20; i++) {
+        for (int i = 0; i < priorityQueue.size() && i < 10; i++) {
             UUID poll = priorityQueue.poll();
             if (poll == null) {
                 continue;
