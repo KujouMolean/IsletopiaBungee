@@ -6,31 +6,28 @@ import com.molean.isletopia.shared.message.ServerMessageUtils;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class PlayerInfoBroadcaster {
     public PlayerInfoBroadcaster() {
         ProxyServer.getInstance().getScheduler().schedule(IsletopiaBungee.getPlugin(), () -> {
             ArrayList<ProxiedPlayer> proxiedPlayers = new ArrayList<>(ProxyServer.getInstance().getPlayers());
-            ArrayList<String> playersName = new ArrayList<>();
-            Map<String, List<String>> serverPlayersMap = new HashMap<>();
+            Map<UUID,String> playersName = new HashMap<>();
+            Map<String, Map<UUID,String>> serverPlayersMap = new HashMap<>();
 
             for (String s : ProxyServer.getInstance().getConfig().getServers().keySet()) {
-                serverPlayersMap.put(s, new ArrayList<>());
+                serverPlayersMap.put(s, new HashMap<>());
             }
 
             for (ProxiedPlayer proxiedPlayer : proxiedPlayers) {
                 if(proxiedPlayer.getServer()==null){
                     continue;
                 }
-                playersName.add(proxiedPlayer.getName());
+                playersName.put(proxiedPlayer.getUniqueId(), proxiedPlayer.getName());
                 String server = proxiedPlayer.getServer().getInfo().getName();
-                List<String> list = serverPlayersMap.get(server);
-                list.add(proxiedPlayer.getName());
+                Map<UUID, String> map = serverPlayersMap.get(server);
+                map.put(proxiedPlayer.getUniqueId(), proxiedPlayer.getName());
             }
 
             PlayerInfoObject playerInfoObject = new PlayerInfoObject();

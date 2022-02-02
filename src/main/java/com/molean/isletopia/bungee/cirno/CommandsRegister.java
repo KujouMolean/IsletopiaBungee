@@ -55,6 +55,9 @@ public class CommandsRegister {
         new Nick();
         new UUIDCommand();
         new Balance();
-
+        new Broadcast();
+        new WBan();
+        new WPardon();
+        new WBanList();
     }
 }

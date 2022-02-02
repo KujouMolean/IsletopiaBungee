@@ -2,6 +2,8 @@ package com.molean.isletopia.bungee.cirno;
 
 import com.molean.cirnobot.CirnoHandler;
 import com.molean.cirnobot.Robot;
+import com.molean.isletopia.bungee.cirno.command.group.WBan;
+import net.mamoe.mirai.contact.NormalMember;
 import net.mamoe.mirai.message.data.*;
 
 import java.util.regex.Matcher;
@@ -63,7 +65,7 @@ public class CirnoHandlerImpl implements CirnoHandler {
                 String s = singleMessage.contentToString();
                 if (s.startsWith("<")) {
                     subMessage = "";
-                }else{
+                } else {
                     subMessage = singleMessage.contentToString();
                 }
 
@@ -76,14 +78,54 @@ public class CirnoHandlerImpl implements CirnoHandler {
 
     @Override
     public void handler(long id, String nameCard, String plainMessage, MessageChain messageChain) {
-        CirnoUtils.broadcastChat(CirnoUtils.getNameCardByQQ(id), getPlainMessage(messageChain));
+        String plainMessage1 = getPlainMessage(messageChain);
+
+        String commandCallback = null;
         //command handle
         if (plainMessage.startsWith("/")) {
             String command = plainMessage.substring(1);
-            String s = CommandHandler.handleCommand(id, command);
-            if (s != null) {
-                CirnoUtils.broadcastMessage(s);
+            commandCallback = CommandHandler.handleCommand(id, command);
+        }
+        NormalMember normalMember = CirnoUtils.getGameGroup().get(id);
+
+        boolean bad = false;
+        if (normalMember != null) {
+            for (String s : WBan.stringSet) {
+                if (plainMessage1.contains(s)) {
+                    bad = true;
+                    if (!PermissionHandler.hasPermission("wban.bypass", id)) {
+                        normalMember.mute(60 * 10);
+                    }
+                    MessageSource.recall(messageChain);
+                    break;
+                }
             }
         }
+
+        if (!bad) {
+            CirnoUtils.broadcastChat(CirnoUtils.getNameCardByQQ(id), plainMessage1);
+        }
+        if (commandCallback != null) {
+            CirnoUtils.broadcastMessage(commandCallback);
+        }
+        if (messageChain.get(1) instanceof QuoteReply quoteReply) {
+            if (PermissionHandler.hasPermission("essence", id)) {
+                if (messageChain.get(2) instanceof PlainText plainText) {
+                    if (plainText.contentToString().trim().equals("/essence")) {
+                        CirnoUtils.getGameGroup().setEssenceMessage(quoteReply.getSource());
+                    }
+                }
+            }
+            if (PermissionHandler.hasPermission("recall", id)) {
+                if (messageChain.get(2) instanceof PlainText plainText) {
+                    if (plainText.contentToString().trim().equals("/recall")) {
+                        MessageSource.recall(quoteReply.getSource());
+                    }
+                }
+            }
+
+        }
+
+
     }
 }

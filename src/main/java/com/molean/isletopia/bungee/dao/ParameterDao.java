@@ -74,12 +74,12 @@ public class ParameterDao {
         }
         try (Connection connection = SqliteDataSourceUtils.getConnection()) {
             String sql = """
-                        update parameter
-                        set value = ?
-                        where type = ?
-                          and target = ?
-                          and key = ?;
-                        """;
+                    update parameter
+                    set value = ?
+                    where type = ?
+                      and target = ?
+                      and key = ?;
+                    """;
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, value);
             preparedStatement.setString(2, type);
@@ -124,12 +124,12 @@ public class ParameterDao {
         }
         try (Connection connection = SqliteDataSourceUtils.getConnection()) {
             String sql = """
-                        delete
-                        from parameter
-                        where type = ?
-                          and target = ?
-                          and key = ?;
-                     """;
+                       delete
+                       from parameter
+                       where type = ?
+                         and target = ?
+                         and key = ?;
+                    """;
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, type);
             preparedStatement.setString(2, obj);
@@ -154,6 +154,32 @@ public class ParameterDao {
                     """;
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, type);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                String string = resultSet.getString(1);
+                strings.add(string);
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return strings;
+    }
+
+    public static List<String> keys(String type, String target) {
+        if (!checked) {
+            init();
+            checked = true;
+        }
+        ArrayList<String> strings = new ArrayList<>();
+        try (Connection connection = SqliteDataSourceUtils.getConnection()) {
+            String sql = """
+                       select key
+                       from parameter
+                       where type = ? and target= ?
+                    """;
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, type);
+            preparedStatement.setString(2, target);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 String string = resultSet.getString(1);

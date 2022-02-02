@@ -10,8 +10,12 @@ import com.molean.isletopia.bungee.handler.HandlerRegister;
 import com.molean.isletopia.bungee.individual.*;
 import com.molean.isletopia.shared.message.RedisMessageListener;
 import net.mamoe.mirai.event.EventChannel;
+import net.mamoe.mirai.event.EventHandler;
 import net.mamoe.mirai.event.SimpleListenerHost;
 import net.mamoe.mirai.event.events.BotEvent;
+import net.mamoe.mirai.event.events.GroupMessageEvent;
+import net.mamoe.mirai.event.events.MessageRecallEvent;
+import net.mamoe.mirai.message.data.MessageSource;
 import net.md_5.bungee.UserConnection;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -27,8 +31,7 @@ public final class IsletopiaBungee extends Plugin {
 
     public void init() {
         EventChannel<BotEvent> eventChannel = Robot.getBot().getEventChannel();
-        eventChannel.registerListenerHost(new SimpleListenerHost() {
-        });
+
     }
 
 
@@ -38,9 +41,9 @@ public final class IsletopiaBungee extends Plugin {
         new CommandsRegister();
         new ListenerRegister();
 
-        if (ProxyServer.getInstance().getConfig().getPlayerLimit() > 5) {
+//        if (ProxyServer.getInstance().getConfig().getPlayerLimit() > 5)
             CirnoBot.setCirnoHandler(new CirnoHandlerImpl());
-        }
+
 
         new UniversalTell();
         new WelcomeMessage();

@@ -58,8 +58,8 @@ public class UniversalChat implements Listener {
 
         String p = proxiedPlayer.getName();
         String m = event.getMessage();
-        String channels = ChatChannel.getChannels(proxiedPlayer.getUniqueId());
-        for (String channel : channels.split(",")) {
+        List<String> channels = ChatChannel.getChannels(proxiedPlayer.getUniqueId());
+        for (String channel : channels) {
             UniversalChat.chatMessage(channel, p, m);
             if (channel.equalsIgnoreCase("白")) {
                 ProxyServer.getInstance().getScheduler().runAsync(IsletopiaBungee.getPlugin(), () -> {
